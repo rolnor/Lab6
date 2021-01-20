@@ -16,27 +16,22 @@ int main(int argc, char* args[])
 	bool quit = false;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Window* window = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
+	SDL_Window* window = SDL_CreateWindow("SpaceBreakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 400, SDL_WINDOW_SHOWN);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	Point2D point2d;
-	int rgb[4] = { 100,233,245,44 };
+	Point2D *playerPosition = new Point2D(250,350);
+	int rgb[4] = { 0,0,0,0 };
 
-	Rectangle* recPoint = NULL;
-	Triangle* triPoint = NULL;
-	Circle* cirPoint = NULL;
+	Triangle* player = NULL;
+//	Triangle* triPoint = NULL;
+//	Circle* cirPoint = NULL;
 	srand(time(NULL));
-	float randomx, randomy, randomh, randomw, randomr, randomb;
+
+	player = new Triangle(*playerPosition,rgb,30,20);
+	shapes.push_back(player);
 
 	while(!quit)
 	{
-		randomx = rand() % 300;
-		randomy = rand() % 300;
-		randomh = rand() % 200;
-		randomw = rand() % 200;
-		randomb = rand() % 200;
-		randomr = rand() % 100;
-
 		SDL_WaitEvent(&event);
 
 		switch (event.type)
@@ -50,14 +45,13 @@ int main(int argc, char* args[])
 					case SDLK_q:
 						quit = true;
 						break;
-					case SDLK_c:
-						changeColor(rgb, 0, 0, 255, 255);
-						point2d.setX(randomx);
-						point2d.setY(randomy);
-						cirPoint = new Circle(point2d, rgb, randomr);
-						shapes.push_back(cirPoint);
+					case SDLK_LEFT:
+						playerPosition->setX(playerPosition->getX() - 10);
 						break;
-					case SDLK_r:
+					case SDLK_RIGHT:
+						playerPosition->setX(playerPosition->getX() + 10);
+						break;
+/*					case SDLK_r:
 						changeColor(rgb, 255, 0, 0, 255);
 						point2d.setX(randomx);
 						point2d.setY(randomy);
@@ -75,7 +69,7 @@ int main(int argc, char* args[])
 						cout << "remove shapes" << endl;
 						shapes.clear();
 						shapes.shrink_to_fit();
-						break;
+						break;*/
 				}
 		}
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -86,9 +80,11 @@ int main(int argc, char* args[])
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-	delete recPoint;
-	delete triPoint;
-	delete cirPoint;
+	delete player;
+//	if(paddlePosition != nullptr)
+//		delete paddlePosition;
+//	delete triPoint;
+//	delete cirPoint;
 	return 0;
 }
 

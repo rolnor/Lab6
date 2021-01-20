@@ -1,9 +1,9 @@
 #include <shapes.h>
-
+/*
 void Shape::render(SDL_Renderer* renderer)
 {
 	cout << "Basic shape. Print not implemented" << endl;
-}
+}*/
 
 Shape::Shape(Point2D& inPoint, int rgbAlpha[4])
 {
@@ -14,7 +14,7 @@ Shape::Shape(Point2D& inPoint, int rgbAlpha[4])
 		else rgb[i] = 0;
 	}
 
-	point = new Point2D(inPoint.getX(),inPoint.getY());
+	point = &inPoint;
 }
 
 Shape::~Shape()
