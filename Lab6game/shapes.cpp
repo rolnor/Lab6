@@ -1,10 +1,4 @@
 #include <shapes.h>
-/*
-void Shape::render(SDL_Renderer* renderer)
-{
-	cout << "Basic shape. Print not implemented" << endl;
-}*/
-
 Shape::Shape(Point2D& inPoint, int rgbAlpha[4])
 {
 	for (int i = 0; i < 3; i++)

@@ -8,37 +8,41 @@ void initBricks(vector<Shape*> &BrickItems, int row);
 
 const int winX = 600;
 const int winY = 400;
-int rgb[4] = { 0,0,0,0 };
+
 
 int main(int argc, char* args[])
 {
+	int rgb[4] = { 0,0,0,0 };
 	bool shotActive = false;
+	// Numbers of brick rows
+	int gameRows = 3;
+	int gameOver = 13 * gameRows;
 	int paddleHit = 0;
+	// Flag for game over message.
+	bool isTheGameOver = false;
+
 	vector<Shape*> playerItems;
 	vector<Shape*> brickItems;
-	SDL_Keycode key = NULL;
 	SDL_Event event;
+	// Flag for player quit keypress.
 	bool quit = false;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Window* window = SDL_CreateWindow("SpaceBreakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winX, winY, SDL_WINDOW_SHOWN);
+	SDL_Window* window = SDL_CreateWindow("Breakout-ish", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, winX, winY, SDL_WINDOW_SHOWN);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	Point2D *playerPosition = new Point2D(250,winY-20);
 	Point2D *shotPosition = nullptr;
 	
-
 	Rectangle* player = nullptr;
 	Circle* shot = nullptr;
-
-//	srand(time(NULL));
 
 	// Create and draw playerobject
 	player = new Rectangle(*playerPosition,rgb,80,5,true);
 	playerItems.push_back(player);
 
 	// Init and draw the initial bricks
-	for (int numberOfBrickRows = 0; numberOfBrickRows < 3; numberOfBrickRows++)
+	for (int numberOfBrickRows = 0; numberOfBrickRows < gameRows; numberOfBrickRows++)
 	{
 		initBricks(brickItems, numberOfBrickRows);
 	}
@@ -47,7 +51,7 @@ int main(int argc, char* args[])
 		SDL_Delay(5);
 		SDL_PollEvent(&event);
 
-		if (shotActive)
+		if (shotActive && gameOver != 0)
 		{
 			int i = 0;
 			float getY, getX;
@@ -59,43 +63,53 @@ int main(int argc, char* args[])
 				getX = brick[0]->getX();
 				shotX = shotPosition->getX();
 				shotY = shotPosition->getY();
+				// check if brick matches ball position
 				if (getY >= shotY && getX <= shotX && getX+40 >= shotX)//  && getX >= shotX && brick[0]->getX() <= shotPosition->getY()+40)
 				{ 
+					// hide brick if match is found and bounce ball
 					Rectangle* myitem = (Rectangle*)brickItems.at(i);
 					if (myitem->getDrawMe())
 					{
 						//shotActive = false;
 						myitem->setDrawMe(false);
+						gameOver -= 1;
 						shot->doBounce('y');
 					}	
 				}	
 				i++;
 			}
+			// check if ball is on the paddle
 			if (shotPosition->getY() == player->getY() && shotPosition->getX() >= player->getX() && shotPosition->getX() <= (player->getX() + player->getWidth()))
 			{
 				paddleHit = shotPosition->getX() - player->getX();
-				// if edge of the paddle is hit 
+				// if left edge of the paddle is hit bounce left
 				if (paddleHit < 20)
 				{
 					shot->doBounce('l');
 				}
+				// if right edge of the paddle is hit bounce right
 				else if(paddleHit > player->getWidth() - 20)
 				{
 					shot->doBounce('r');
 				}
 				else
 				{
+					// bounce straight up if middle of paddle is hit.
 					if(paddleHit > (player->getWidth()/2)-5 && paddleHit < (player->getWidth() / 2) + 5)
 						shot->doBounce('s');
+					//else normal bounce
 					else
 						shot->doBounce('y');
 				}
 					
 			}
+			// handle bounce when ball hits the windowframe 
 			if (shotPosition->getY() > 0)
 			{
+				// bounce of left or right window frame
 				if (shotPosition->getX() > winX - 1 || shotPosition->getX() <= 1)
 					shot->doBounce('x');
+				// bounce of top window frame
 				else if (shotPosition->getY() <= 1)
 				{
 					shot->doBounce('y');
@@ -106,7 +120,7 @@ int main(int argc, char* args[])
 				shotPosition->setX(shotPosition->getX() + shot->getDirectionX());
 			}			
 			
-			
+			// restart if ball is missed with paddle		
 			if(shotPosition->getY() > winY-1)
 			{
 				playerItems.pop_back();
@@ -115,7 +129,17 @@ int main(int argc, char* args[])
 				shotActive = false;
 			}	
 		}
-	
+		// check if game is complete and inform player
+		if (gameOver == 0)
+		{
+			if (!isTheGameOver)
+			{
+				cout << "The game is over. Press esc to quit.";
+				isTheGameOver = true;
+			}
+			
+		}
+		
 		switch (event.type)
 		{		
 			case SDL_QUIT:
@@ -161,6 +185,7 @@ int main(int argc, char* args[])
 	return 0;
 }
 
+// Draw the brick array
 void callRendering(vector<Shape*> shapes, SDL_Renderer* renderer)
 {
 	for (auto iterator = shapes.begin(); iterator < shapes.end(); ++iterator)
@@ -169,18 +194,12 @@ void callRendering(vector<Shape*> shapes, SDL_Renderer* renderer)
 	}
 }
 
-void changeColor(int colors[4], int val1, int val2, int val3, int val4)
-{
-	colors[0] = val1;
-	colors[1] = val2;
-	colors[2] = val3;
-	colors[3] = val4;
-}
-
+// Fill vectorarray with brick objects with spacing between
 void initBricks(vector<Shape*>& BrickItems, int row)
 {
+	int rgb[4] = { 0,0,0,0 };
 	int rowSpacing = row * 15;
-	// Fill vectorarray with brick objects with spacing between
+	
 	for(int i = 10; i<winX-45; i+=45)
 	{
 		Point2D* brickPosition = new Point2D(i, rowSpacing);
