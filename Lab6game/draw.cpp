@@ -2,10 +2,7 @@
 #include <shapes.h>
 #include <SDL.h>
 #include <vector>
-#include<algorithm>
 
-//void createObject(Shape* object);
-void changeColor(int colors[4], int val1, int val2, int val3, int val4);
 void callRendering(vector<Shape*> shapes, SDL_Renderer* renderer);
 void initBricks(vector<Shape*> &BrickItems, int row);
 
@@ -16,6 +13,7 @@ int rgb[4] = { 0,0,0,0 };
 int main(int argc, char* args[])
 {
 	bool shotActive = false;
+	int paddleHit = 0;
 	vector<Shape*> playerItems;
 	vector<Shape*> brickItems;
 	SDL_Keycode key = NULL;
@@ -30,13 +28,13 @@ int main(int argc, char* args[])
 	Point2D *shotPosition = nullptr;
 	
 
-	Triangle* player = nullptr;
+	Rectangle* player = nullptr;
 	Circle* shot = nullptr;
 
 //	srand(time(NULL));
 
 	// Create and draw playerobject
-	player = new Triangle(*playerPosition,rgb,30,20);
+	player = new Rectangle(*playerPosition,rgb,80,5,true);
 	playerItems.push_back(player);
 
 	// Init and draw the initial bricks
@@ -66,17 +64,50 @@ int main(int argc, char* args[])
 					Rectangle* myitem = (Rectangle*)brickItems.at(i);
 					if (myitem->getDrawMe())
 					{
-						shotActive = false;
+						//shotActive = false;
 						myitem->setDrawMe(false);
+						shot->doBounce('y');
 					}	
 				}	
 				i++;
 			}
-			// if shot still active continue movement path
-			if(shotPosition->getY() > 0 && shotActive)
-				shotPosition->setY(shotPosition->getY() - 2);
-			// if not active remove the shot and allow player another shot
-			else
+			if (shotPosition->getY() == player->getY() && shotPosition->getX() >= player->getX() && shotPosition->getX() <= (player->getX() + player->getWidth()))
+			{
+				paddleHit = shotPosition->getX() - player->getX();
+				// if edge of the paddle is hit 
+				if (paddleHit < 20)
+				{
+					shot->doBounce('l');
+				}
+				else if(paddleHit > player->getWidth() - 20)
+				{
+					shot->doBounce('r');
+				}
+				else
+				{
+					if(paddleHit > (player->getWidth()/2)-5 && paddleHit < (player->getWidth() / 2) + 5)
+						shot->doBounce('s');
+					else
+						shot->doBounce('y');
+				}
+					
+			}
+			if (shotPosition->getY() > 0)
+			{
+				if (shotPosition->getX() > winX - 1 || shotPosition->getX() <= 1)
+					shot->doBounce('x');
+				else if (shotPosition->getY() <= 1)
+				{
+					shot->doBounce('y');
+				}
+
+				// create movement according to path vector
+				shotPosition->setY(shotPosition->getY()+shot->getDirectionY());
+				shotPosition->setX(shotPosition->getX() + shot->getDirectionX());
+			}			
+			
+			
+			if(shotPosition->getY() > winY-1)
 			{
 				playerItems.pop_back();
 				delete shot;
@@ -97,28 +128,22 @@ int main(int argc, char* args[])
 						quit = true;
 						break;
 					case SDLK_LEFT:
-						if(playerPosition->getX() > 10)
-							playerPosition->setX(playerPosition->getX() - 1);
+						if(playerPosition->getX() >= 0)
+							playerPosition->setX(playerPosition->getX() - 2);
 						break;
 					case SDLK_RIGHT:
-						if(playerPosition->getX() < winX-40)
-							playerPosition->setX(playerPosition->getX() + 1);
+						if(playerPosition->getX() < winX-player->getWidth())
+							playerPosition->setX(playerPosition->getX() + 2);
 						break;
 					case SDLK_SPACE:
 						if (!shotActive)
 						{
 							shotActive = true;
-							shotPosition = new Point2D(playerPosition->getX()+player->getBase()/2, playerPosition->getY()-player->getHeight());
-							shot = new Circle(*shotPosition, rgb, 2);
+							shotPosition = new Point2D(playerPosition->getX()+player->getWidth()/2, playerPosition->getY()-player->getHeight());
+							shot = new Circle(*shotPosition, rgb, 2,1,-1);
 							playerItems.push_back(shot);
 						}
 						break;
-						/*
-					case SDLK_x:
-						cout << "remove shapes" << endl;
-						shapes.clear();
-						shapes.shrink_to_fit();
-						break;*/
 				}
 		}
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -155,9 +180,9 @@ void changeColor(int colors[4], int val1, int val2, int val3, int val4)
 void initBricks(vector<Shape*>& BrickItems, int row)
 {
 	int rowSpacing = row * 15;
+	// Fill vectorarray with brick objects with spacing between
 	for(int i = 10; i<winX-45; i+=45)
 	{
-
 		Point2D* brickPosition = new Point2D(i, rowSpacing);
 		Rectangle *newBrick = new Rectangle(*brickPosition, rgb, 40,10, true);
 		BrickItems.push_back(newBrick);

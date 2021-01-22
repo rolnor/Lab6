@@ -41,6 +41,39 @@ void Circle::render(SDL_Renderer* renderer)
 	}
 }
 
+void Circle::doBounce(char axis)
+{
+	if(axis == 'y') 
+		this->directionY *= -1;
+	else if(axis == 'x')
+		this->directionX *= -1;
+	else if(axis == 's')
+	{
+		this->directionY *= -1;
+		this->directionX *= 0;
+	}
+	else if (axis == 'l')
+	{
+		this->directionY *= -1;
+		this->directionX = -1;
+	}
+	else if (axis == 'r')
+	{
+		this->directionY *= -1;
+		this->directionX = 1;
+	}
+}
+
+int Circle::getDirectionX()
+{
+	return this->directionX;
+}
+
+int Circle::getDirectionY()
+{
+	return this->directionY;
+}
+
 float Triangle::getBase() 
 {
 	return this->base;
@@ -58,4 +91,15 @@ bool Rectangle::getDrawMe()
 void Rectangle::setDrawMe(bool changeValue)
 {
 	this->drawMe = changeValue;
+}
+
+float Rectangle::getWidth()
+{
+	return this->width;
+}
+
+
+float Rectangle::getHeight()
+{
+	return this->height;
 }

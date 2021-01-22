@@ -24,6 +24,8 @@ private:
 public:
 	Rectangle(Point2D& inPoint, int inRgb[], float width, float height, bool drawMe) : Shape(inPoint, inRgb), width(width), height(height), drawMe(drawMe){};
 	void render(SDL_Renderer* renderer);
+	float getWidth();
+	float getHeight();
 	bool getDrawMe();
 	void setDrawMe(bool changeValue);
 };
@@ -43,9 +45,13 @@ class Circle : public Shape
 {
 private:
 	float radius;
+	int directionX, directionY;
 public:
-	Circle(Point2D& inPoint, int inRgb[], float radius) : Shape(inPoint, inRgb), radius(radius) {};
+	Circle(Point2D& inPoint, int inRgb[], float radius, int directionX, int directionY) : Shape(inPoint, inRgb), radius(radius), directionX(directionX), directionY(directionY) {};
 	void render(SDL_Renderer* renderer);
+	void doBounce(char axis);
+	int getDirectionX();
+	int getDirectionY();
 };
 
 
