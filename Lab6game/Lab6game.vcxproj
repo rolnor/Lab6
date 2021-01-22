@@ -146,7 +146,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="draw.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="methods.cpp" />
     <ClCompile Include="point2d.cpp" />
     <ClCompile Include="shapes.cpp" />
