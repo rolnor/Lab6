@@ -20,9 +20,12 @@ class Rectangle : public Shape
 {
 private:
 	float width, height;
+	bool drawMe;
 public:
-	Rectangle(Point2D& inPoint, int inRgb[], float width, float height) : Shape(inPoint, inRgb), width(width), height(height) {};
+	Rectangle(Point2D& inPoint, int inRgb[], float width, float height, bool drawMe) : Shape(inPoint, inRgb), width(width), height(height), drawMe(drawMe){};
 	void render(SDL_Renderer* renderer);
+	bool getDrawMe();
+	void setDrawMe(bool changeValue);
 };
 
 class Triangle : public Shape

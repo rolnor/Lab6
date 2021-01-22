@@ -5,11 +5,14 @@ void Rectangle::render(SDL_Renderer* renderer)
 {
 //	cout << "Rectangle" << endl << "Width: " << this->width << " Height: " << this->height << endl;
 //	cout << "Position:  X = " << this-> getX() << " Y = " << this->getY() << endl << endl;
-	SDL_SetRenderDrawColor(renderer, this->getrgb(0), this->getrgb(1), this->getrgb(2), this->getrgb(3));
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX() + this->width, this->getY());
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX(), this->getY() + this->height);
-	SDL_RenderDrawLine(renderer, this->getX() + this->width, this->getY(), this->getX() + this->width, (int)this->getY() + this->height);
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY() + this->height, this->getX() + this->width, (int)this->getY() + this->height);
+	if (this->getDrawMe())
+	{
+		SDL_SetRenderDrawColor(renderer, this->getrgb(0), this->getrgb(1), this->getrgb(2), this->getrgb(3));
+		SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX() + this->width, this->getY());
+		SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX(), this->getY() + this->height);
+		SDL_RenderDrawLine(renderer, this->getX() + this->width, this->getY(), this->getX() + this->width, (int)this->getY() + this->height);
+		SDL_RenderDrawLine(renderer, this->getX(), this->getY() + this->height, this->getX() + this->width, (int)this->getY() + this->height);
+	}
 }
 
 void Triangle::render(SDL_Renderer* renderer)
@@ -21,11 +24,6 @@ void Triangle::render(SDL_Renderer* renderer)
 	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX() + this->getBase(), this->getY());
 	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX() + this->getBase()/2, this->getY()-this->getHeight());
 	SDL_RenderDrawLine(renderer, this->getX()+this->getBase(), this->getY(), this->getX() + this->getBase() / 2, this->getY() - this->height);
-
-	/*
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX(), this->getY() + this->height);
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY() + this->height, this->getX() + this->base, this->getY() + this->height);
-	SDL_RenderDrawLine(renderer, this->getX(), this->getY(), this->getX() + this->base, this->getY() + this->height);*/
 }
 
 void Circle::render(SDL_Renderer* renderer)
@@ -50,4 +48,14 @@ float Triangle::getBase()
 float Triangle::getHeight()
 {
 	return this->height;
+}
+
+bool Rectangle::getDrawMe()
+{
+	return this->drawMe;
+}
+
+void Rectangle::setDrawMe(bool changeValue)
+{
+	this->drawMe = changeValue;
 }

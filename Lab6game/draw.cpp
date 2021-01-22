@@ -2,6 +2,7 @@
 #include <shapes.h>
 #include <SDL.h>
 #include <vector>
+#include<algorithm>
 
 //void createObject(Shape* object);
 void changeColor(int colors[4], int val1, int val2, int val3, int val4);
@@ -31,12 +32,14 @@ int main(int argc, char* args[])
 
 	Triangle* player = nullptr;
 	Circle* shot = nullptr;
-//	Triangle* triPoint = NULL;
-//	Circle* cirPoint = NULL;
-	srand(time(NULL));
 
+//	srand(time(NULL));
+
+	// Create and draw playerobject
 	player = new Triangle(*playerPosition,rgb,30,20);
 	playerItems.push_back(player);
+
+	// Init and draw the initial bricks
 	for (int numberOfBrickRows = 0; numberOfBrickRows < 3; numberOfBrickRows++)
 	{
 		initBricks(brickItems, numberOfBrickRows);
@@ -48,11 +51,31 @@ int main(int argc, char* args[])
 
 		if (shotActive)
 		{
-			// ------------------------------------------------------------
-			// TODO! if shotpos == brickpos THEN delete brick AND shot
-			// ------------------------------------------------------------
-			if(shotPosition->getY() > 0)
+			int i = 0;
+			float getY, getX;
+			float shotX, shotY;
+			// check if shot position matches any brickpositions
+			for (auto brick = brickItems.begin(); brick != brickItems.end(); ++brick)
+			{
+				getY = brick[0]->getY()+15;  
+				getX = brick[0]->getX();
+				shotX = shotPosition->getX();
+				shotY = shotPosition->getY();
+				if (getY >= shotY && getX <= shotX && getX+40 >= shotX)//  && getX >= shotX && brick[0]->getX() <= shotPosition->getY()+40)
+				{ 
+					Rectangle* myitem = (Rectangle*)brickItems.at(i);
+					if (myitem->getDrawMe())
+					{
+						shotActive = false;
+						myitem->setDrawMe(false);
+					}	
+				}	
+				i++;
+			}
+			// if shot still active continue movement path
+			if(shotPosition->getY() > 0 && shotActive)
 				shotPosition->setY(shotPosition->getY() - 2);
+			// if not active remove the shot and allow player another shot
 			else
 			{
 				playerItems.pop_back();
@@ -90,13 +113,7 @@ int main(int argc, char* args[])
 							playerItems.push_back(shot);
 						}
 						break;
-						/*case SDLK_t:
-						changeColor(rgb, 155, 155, 0, 255);
-						point2d.setX(randomx);
-						point2d.setY(randomy);
-						triPoint = new Triangle(point2d, rgb, randomb, randomh);
-						shapes.push_back(triPoint);
-						break;
+						/*
 					case SDLK_x:
 						cout << "remove shapes" << endl;
 						shapes.clear();
@@ -142,7 +159,7 @@ void initBricks(vector<Shape*>& BrickItems, int row)
 	{
 
 		Point2D* brickPosition = new Point2D(i, rowSpacing);
-		Rectangle *newBrick = new Rectangle(*brickPosition, rgb, 40,10);
+		Rectangle *newBrick = new Rectangle(*brickPosition, rgb, 40,10, true);
 		BrickItems.push_back(newBrick);
 	}
 }
