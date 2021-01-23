@@ -154,6 +154,13 @@
     <ClInclude Include="point2d.h" />
     <ClInclude Include="shapes.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="HowToPlay.txt" />
+    <Text Include="reflection.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="classdiag.class.violet.html" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

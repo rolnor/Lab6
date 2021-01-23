@@ -36,4 +36,11 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="HowToPlay.txt" />
+    <Text Include="reflection.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="classdiag.class.violet.html" />
+  </ItemGroup>
 </Project>

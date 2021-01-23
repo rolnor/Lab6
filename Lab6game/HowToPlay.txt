@@ -1,0 +1,4 @@
+Key used are left and right arrow key to control the paddle.
+Space fires the ball if it is not in play.
+Lifes are not inplemented so the game continues untill all bricks are destroyed.
+Esc quits the game at any time.

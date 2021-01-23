@@ -1,0 +1,12 @@
+-What did you learn? What did you know already?
+Got a better understanding of memory management through the linked list.
+Interesting to work a bit more with SDL.
+
+-What was difficult in the lab? How did you overcome it?
+The SDL part was a bit hard to understand because of the scope of the library.
+
+-How can the lab be improved?
+Nothing much to add. Good structured lab with interesting parts of SDL.
+
+-Additionally, write an estimate how many hours you spent on this lab.
+About 5 work days.
